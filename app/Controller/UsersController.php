@@ -7,6 +7,161 @@ App::uses('AppController', 'Controller');
  */
 class UsersController extends AppController {
 
+    function beforeFilter(){
+        parent::beforeFilter();
+        $this->Auth->allow('*');
+    }
+
+/**
+ * index login
+ *
+ * @return void
+ */
+    public function login(){
+        $this->User->validate = $this->User->loginValidate;
+
+        $url_params = array('?' => false);
+        
+        if (isset($this->request->query['f']))
+            $url_params['?']['f'] = $this->request->query['f'];
+        
+        if (isset($this->request->query['anchor']))
+            $url_params['?']['anchor'] = $this->request->query['anchor'];
+        
+        $this->set('url_params', $url_params);
+
+        header('Cache-Control: no-cache, no-store, must-revalidate'); 
+        header('Pragma: no-cache'); 
+        header('Expires: 0');
+
+        //if user post login form when he is logged in already
+        if(!empty($this->user_data['id'])){
+            $this->redirect('/Dashboard');
+            die();
+        }
+
+        if ($this->request->is('post') || $this->request->is('put')) {
+            
+            //if user post login form when he is logged in already
+            if(!empty($this->user_data['id'])){
+                $this->redirect('/Dashboard/');
+                die();
+			}
+			           
+            $this->User->set($this->request->data);
+            $this->User->validates();
+            
+            if (empty($this->User->validationErrors)) {
+                if ($this->Auth->login()) {
+                    $user = $this->User->getUserDetails($this->Auth->user('id'));
+                    $this->user_data = $user['User'];
+
+                    //remember user
+                    if ($this->request->data['User']['remember_me']) {
+                        $this->Cookie->write('User.remembered', 1, false, '+100 days');
+                    }
+                    //-/remember user
+                    
+                    
+                    $redirect_str = '';
+                    
+                    if (isset($this->request->query['f']))
+                        $redirect_str .= $this->request->query['f'];
+                    
+                    if (isset($this->request->query['anchor']))
+                        $redirect_str .= '#' . $this->request->query['anchor'];
+                        
+                    if (!empty($redirect_str))
+                        $this->redirect($redirect_str);
+                    
+                    $this->redirect($this->Auth->redirect());
+                } else
+                    $this->Session->setFlash(__('The username/password combination doesn\'t match.'), 'default', array(), 'auth');
+            }
+        } elseif ($this->Auth->user()) {
+            $this->redirect($this->Auth->redirect());
+        }
+    }
+
+/**
+ * forgot_password method
+ *
+ * @return void
+ */
+    public function forgot_password(){
+        die('fp');
+        $this->set('show_popup', $this->Session->read('ForgotPasswordSuccess'));
+        $this->Session->write('ForgotPasswordSucess', false);
+
+        if ($this->request->is('post') || $this->request->is('put')) {
+
+            $fp_res = $this->User->forgotPassword($this->request->data);
+
+            if($fp_res['status'] == 'ok') {
+                $this->Session->write('ForgotPasswordSuccess', true);
+                $this->redirect(array('controller' => 'users', 'action' => 'forgot_password'));
+            }
+        }
+
+        $this->Session->write('ForgotPasswordSuccess', false);
+    }
+    
+/**
+ * get_new_password method
+ * 
+ * @param string $hash
+ * @return void
+ */
+    public function get_new_password($hash = null) {
+        if (empty($hash)) {
+            $this->Session->setFlash('This user does not exist.', 'default', array(), 'flash2');
+            $this->redirect(array('action' => 'login'));
+        }
+        $user = $this->User->find('first', array(
+            'conditions' => array(
+                'User.hash' => $hash,
+                'User.is_active' => 1,
+                'User.is_deleted' => 0
+            ),
+            'fields' => array(
+                'User.id',
+                'User.email'
+            ),
+            'recursive' => -1
+        ));
+        if (!$user) {
+            $this->Session->setFlash('This user does not exist.', 'default', array(), 'flash2');
+            $this->redirect(array('action' => 'login'));
+        }
+        $password_hash = md5($user['User']['email'] . (time() + microtime()));
+        $new_password = substr($password_hash, 0, 8);
+        
+        $data = array(
+            'User' => array(
+                'password' => $new_password,
+                'modified' => date('Y-m-d H:i:s'),
+                'hash' => null
+            )
+        );
+        
+        $this->User->id = $user['User']['id'];
+        if (!$this->User->save($data, false)) {
+            $this->Session->setFlash(__('New password was not sent. Please try again later.'));
+            $this->redirect(array('action' => 'login'));
+        }
+        
+        if (!$this->User->sendNewPassword($user, $new_password)) {
+            $this->Session->setFlash(__('New password was not sent. Please try again later.'));
+            $this->redirect(array('action' => 'login'));
+        }
+        
+        $this->Session->setFlash('Your password has been reset. Your username and password have been sent to the email address.', 'default', array(), 'flash2');
+        $this->redirect(array('action' => 'login'));
+    }
+    public function signup(){
+        $this->render('signup');
+    }
+
 /**
  * index method
  *

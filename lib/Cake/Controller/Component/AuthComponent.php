@@ -304,7 +304,7 @@ class AuthComponent extends Component {
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
 
-		if ($loginAction != $url && in_array($action, array_map('strtolower', $this->allowedActions))) {
+		if ($loginAction != $url && (in_array($action, array_map('strtolower', $this->allowedActions)) || in_array('*', array_map('strtolower', $this->allowedActions)))) {
 			return true;
 		}
 
