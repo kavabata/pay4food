@@ -14,6 +14,13 @@ class TransactionsController extends AppController {
  */
 	public $helpers = array('Js');
 
+    public function dashboard(){
+    }
+
+
+    public function payout(){
+        
+    }
 /**
  * index method
  *

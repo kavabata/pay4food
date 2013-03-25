@@ -4,7 +4,6 @@
 		<legend><?php echo __('Add Group'); ?></legend>
 	<?php
 		echo $this->Form->input('name');
-		echo $this->Form->input('user_id');
 		echo $this->Form->input('currency');
 	?>
 	</fieldset>

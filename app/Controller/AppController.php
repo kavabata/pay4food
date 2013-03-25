@@ -66,7 +66,7 @@ class AppController extends Controller {
         
         $this->Auth->authenticate = array('Form' => array(
             'userModel' => 'Users.User',
-            'scope' => array('User.is_active' => 1, 'User.is_deleted' => 0),
+            'scope' => array('User.is_active' => 1),
             'fields' => array('username' => 'email', 'password' => 'password')
         ));
         
@@ -81,6 +81,7 @@ class AppController extends Controller {
         if($this->Auth->user()) {
             $user_data = $this->User->getUserDetails($this->Auth->user('id'));
             $this->user_data = $user_data['User'];
+            $this->user_id = $user_data['User']['id'];
         } else {
             
             // login remembered user
@@ -96,6 +97,7 @@ class AppController extends Controller {
                         $this->Auth->loginRedirect = false;
                         if($this->Auth->login($user_data['User'])) {
                             $this->user_data = $user_data['User'];
+                            $this->user_id = $user_data['User']['id'];
                             $this->Cookie->write('User.hash', $uhash, false, '+100 days');
                         }
                     }

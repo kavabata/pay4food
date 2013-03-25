@@ -32,7 +32,13 @@ var DEBUGKIT = function () {
 	};
 }() ;
 
-DEBUGKIT.$ = jQuery.noConflict(true);
+(function($) {
+    // var DEBUGKIT = ...
+    // DEBUGKIT.$ = jQuery.noConflict(true); changed to 
+    DEBUGKIT.$ = jQuery;
+    // DEBUGKIT.loader = ...
+})(jQuery);
+//DEBUGKIT.$ = jQuery.noConflict(true);
 
 DEBUGKIT.loader = function () {
 	return {

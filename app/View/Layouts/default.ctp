@@ -23,7 +23,10 @@
 
 		echo $this->Html->script(array(
 			'jquery',
-			'bootstrap'
+            'jquery.form',
+            'jquery.validate',
+			'bootstrap',
+            'common'
 		));
 		echo $this->fetch('script');
 	?>
@@ -36,8 +39,10 @@
 				<div class="navbar-inner">
 					<div class="container">
 						<ul class="nav">
-							<li class="<?php echo $this->name == 'Pages' ? 'active' : ''; ?>"><a href="/">Home</a></li>
-							<li class="<?php echo $this->name == 'Users' ? 'active' : ''; ?>"><a href="/users">Users</a></li>
+							<li class="<?php echo $this->name == 'Transactions' && $this->action == "dashboard"? 'active' : ''; ?>"><a href="/">Dashboard</a></li>
+							<li class="<?php echo $this->name == 'Transactions' && $this->action == "payout" ? 'active' : ''; ?>"><a href="/transactions/payout">Payout</a></li>
+                            <li class="<?php echo $this->name == 'Users' ? 'active' : ''; ?>"><a href="/users">Users</a></li>
+                            <li class="<?php echo $this->name == 'Transactions' && $this->action == "index" ? 'active' : ''; ?>"><a href="/transactions">History</a></li>
 						</ul>
 					</div>
 				</div>

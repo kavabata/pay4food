@@ -13,6 +13,17 @@ class User extends AppModel {
  */
 	public $displayField = 'name';
 
+
+    public $hasAndBelongsToMany = array(
+        'Group' =>
+            array(
+                'className'              => 'Group',
+                'joinTable'              => 'groups_users',
+                'foreignKey'             => 'user_id',
+                'associationForeignKey'  => 'group_id',
+                'unique'                 => true,
+            )
+    );
 /**
  * Validation rules
  *
@@ -128,7 +139,7 @@ class User extends AppModel {
         $Email->subject('Pay4Food forgotten password request');
         $Email->from(array('notreply@fay4food.com' => 'TeachersPayTeachers.com'));
         $Email->to($user['User']['email']);
-        $Email->viewVars(array('username' => $user['User']['username'], 'hash' => $user['User']['hash']));
+        $Email->viewVars(array('username' => $user['User']['email'], 'hash' => $user['User']['hash']));
         return true;
     }
     public function sendNewPassword($user = null, $password = null) {
@@ -150,5 +161,38 @@ class User extends AppModel {
         $Email->send();
         
         return true;
+    }
+    public function beforeSave() {
+        if (isset($this->data['User']['password']))
+            $this->data['User']['password'] = AuthComponent::password($this->data['User']['password']);
+       return true;
+    }
+    
+    public function getUserDetails($id = null, $clear = false) {
+        if (!$id)
+            return array();
+        
+        settype($id, 'int');
+        
+        return $this->read(null,$id);
+    }    
+    
+    public function getGroups($user_id) {
+        $sql = "SELECT * FROM groups_users GroupUser 
+        JOIN groups `Group` ON `Group`.id = GroupUser.group_id
+        WHERE GroupUser.user_id = '".$user_id."'";
+        
+        $results = $this->query($sql);
+        $groups = array();
+        if(!empty($results))
+            foreach($results as $row){
+                $groups[$row['Group']['id']] = array(
+                    'id'=>$row['Group']['id'],
+                    'name'=>$row['Group']['name'],
+                    'currency'=>$row['Group']['currency'],
+                    'owner'=>$row['Group']['user_id'] == $user_id ? true : false,
+                );
+            }
+        return $groups;
     }
 }

@@ -12,7 +12,7 @@
                 echo $this->Form->input('email', array('label' => 'Email:', 'class' => 'js-hide-tip'));
                 echo $this->Form->input('password', array('label' => 'Password:', 'class' => 'js-hide-tip', 'after' => '<span class="info">Passwords are case sensitive.</span>'));
                 echo $this->Form->input('remember_me', array('type' => 'checkbox', 'label' => 'Remember me'));
-            echo $this->Form->end('');
+            echo $this->Form->end('Login');
             ?>
         </div>
         
@@ -21,7 +21,7 @@
             <p>Registration is free and easy</p>
             <?php
             echo $this->Html->link(
-                $this->Html->image('signup.jpg', array('alt' => 'SIGNUP')),
+                'Signup',
                 array('controller' => 'users', 'action' => 'signup', 'admin' => false),
                 array('escape' => false)
             );
@@ -78,16 +78,16 @@ $(document).ready(function() {
         }, 
         200);
     
-    if ($.browser.msie && $.browser.version == '7.0') {
-        setInterval(function(){
-            if ($('.error-message').length > 1) {
-                $('.error-message:eq(1)').css({'marginTop':'-22px', 'marginLeft': '-4px'});
-            } else if ($('.error-message').length == 1 && $('#UserPassword').val() == '' && /^[a-zA-Z0-9]+$/.test($('#UserUsername').val())) {
-                $('.error-message:eq(0)').css({'marginTop':'-22px', 'marginLeft': '-4px'});
-            }
-        },
-        200);
-    }
+//      if ($.browser.msie && $.browser.version == '7.0') {
+//        setInterval(function(){
+//            if ($('.error-message').length > 1) {
+//                $('.error-message:eq(1)').css({'marginTop':'-22px', 'marginLeft': '-4px'});
+//            } else if ($('.error-message').length == 1 && $('#UserPassword').val() == '' && /^[a-zA-Z0-9]+$/.test($('#UserUsername').val())) {
+//                $('.error-message:eq(0)').css({'marginTop':'-22px', 'marginLeft': '-4px'});
+//            }
+//        },
+//        200);
+//    }
     
     
 });

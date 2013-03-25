@@ -8,7 +8,6 @@
 	<?php
 		echo $this->Form->input('User.email', array('label' => 'Email Address:', 'class' => 'js-highlight js-hide-tip'));
         echo $this->Form->input('User.email_confirm', array('label' => 'Confirm Email Address:', 'class' => 'js-highlight js-hide-tip'));
-        echo $this->Form->input('User.username', array('maxlength' => '', 'label' => 'Username:', 'class' => 'js-highlight js-hide-tip', 'error' => false, 'after' => $this->Form->error('User.username') . '<span class="info">Your username must be a single word (4-20 characters), <br />no spaces and only alpha-numeric characters.</span>'));
 		echo $this->Form->input('User.password', array('label' => 'Password:', 'class' => 'js-highlight js-hide-tip', 'error' => false, 'after' => $this->Form->error('User.password') . '<span class="info">Passwords are case sensitive.</span>'));
         echo $this->Form->input('User.password_confirm', array('label' => 'Repeat Password:', 'type' => 'password', 'class' => 'js-highlight js-hide-tip'));
 		echo $this->Form->input('name', array('label' => 'Your Name', 'type' => 'text'));
@@ -24,7 +23,7 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#UserRegisterStep1Form').validate({
+    $('#UserSignupForm').validate({
         focusInvalid: false,
         ignore: false,
         errorClass: 'error-message',

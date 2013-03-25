@@ -9,7 +9,7 @@ class UsersController extends AppController {
 
     function beforeFilter(){
         parent::beforeFilter();
-        $this->Auth->allow('*');
+        $this->Auth->allow('login','signup','forgot_password','get_new_password');
     }
 
 /**
@@ -89,7 +89,6 @@ class UsersController extends AppController {
  * @return void
  */
     public function forgot_password(){
-        die('fp');
         $this->set('show_popup', $this->Session->read('ForgotPasswordSuccess'));
         $this->Session->write('ForgotPasswordSucess', false);
 
@@ -120,8 +119,7 @@ class UsersController extends AppController {
         $user = $this->User->find('first', array(
             'conditions' => array(
                 'User.hash' => $hash,
-                'User.is_active' => 1,
-                'User.is_deleted' => 0
+                'User.is_active' => 1
             ),
             'fields' => array(
                 'User.id',
@@ -140,7 +138,7 @@ class UsersController extends AppController {
             'User' => array(
                 'password' => $new_password,
                 'modified' => date('Y-m-d H:i:s'),
-                'hash' => null
+                'hash' => $new_password
             )
         );
         
@@ -160,6 +158,16 @@ class UsersController extends AppController {
     }
     public function signup(){
         $this->render('signup');
+        if ($this->request->is('post')) {
+            $this->User->validates();
+            if (empty($this->User->validationErrors)) {
+                $this->request->data['User']['is_active'] = '1';
+    			$this->User->create();
+    			if ($this->User->save($this->request->data, false)) {
+                    $new_user_id = $this->User->id;
+                }
+            }
+        }
     }
 
 /**
@@ -168,9 +176,24 @@ class UsersController extends AppController {
  * @return void
  */
 	public function index() {
+        $groups = $this->User->getGroups($this->user_id);
+	    $this->set(compact('groups'));
+        
 		$this->User->recursive = 0;
 		$this->set('users', $this->paginate());
 	}
+    public function ajax_list($group_id) {
+        $groups = $this->User->getGroups($this->user_id);
+        if (empty($groups[$group_id])) return false;
+        
+        #$users = $this->Group->getUsers($group_id);
+        
+        //$conditions = array('GroupsUser.group_id'=>$group_id);
+        //$conditions = array('Group.id'=>$group_id);
+  		$this->User->recursive = 2;
+        debug($this->paginate($conditions));
+		$this->set('users', $this->paginate($conditions));
+    }
 
 /**
  * view method

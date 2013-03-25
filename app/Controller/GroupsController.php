@@ -13,7 +13,7 @@ class GroupsController extends AppController {
  * @var array
  */
 	public $helpers = array('Js');
-
+    public $uses = array('Group','GroupsUser');
 /**
  * index method
  *
@@ -21,7 +21,8 @@ class GroupsController extends AppController {
  */
 	public function index() {
 		$this->Group->recursive = 0;
-		$this->set('groups', $this->paginate());
+        $conditions = array('Group.user_id'=>$this->user_id);
+		$this->set('groups', $this->paginate($conditions));
 	}
 
 /**
@@ -47,7 +48,9 @@ class GroupsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Group->create();
+            $this->request->data['Group']['user_id'] = $this->user_id;
 			if ($this->Group->save($this->request->data)) {
+                $this->GroupsUser->save(array('GroupsUser'=>array('user_id'=>$this->user_id,'group_id'=>$this->Group->id,'confirmed'=>'1')));
 				$this->Session->setFlash(__('The group has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -64,11 +67,14 @@ class GroupsController extends AppController {
  * @return void
  */
 	public function edit($id = null) {
-		if (!$this->Group->exists($id)) {
+	    $mygroup = $this->Group->find('first',array('Group.user_id'=>$this->user_id,'Group.id'=>$id));
+		if (empty($mygroup) ) {
 			throw new NotFoundException(__('Invalid group'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
+		    $this->request->data['Group']['user_id'] = $this->user_id;
 			if ($this->Group->save($this->request->data)) {
+                $this->GroupsUser->save(array('GroupsUser'=>array('user_id'=>$this->user_id,'group_id'=>$this->Group->id,'confirmed'=>'1')));
 				$this->Session->setFlash(__('The group has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -90,7 +96,8 @@ class GroupsController extends AppController {
  */
 	public function delete($id = null) {
 		$this->Group->id = $id;
-		if (!$this->Group->exists()) {
+        $mygroup = $this->Group->find('first',array('Group.user_id'=>$this->user_id,'Group.id'=>$id));
+		if (empty($mygroup)) {
 			throw new NotFoundException(__('Invalid group'));
 		}
 		$this->request->onlyAllow('post', 'delete');
