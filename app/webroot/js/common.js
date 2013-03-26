@@ -1,5 +1,4 @@
 function loadPiece(href,divName) {
-    alert(href);
     $(divName).load(href, {}, function(){
 
         var divPaginationLinks = divName+" .pagination a";

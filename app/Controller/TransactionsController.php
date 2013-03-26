@@ -13,6 +13,7 @@ class TransactionsController extends AppController {
  * @var array
  */
 	public $helpers = array('Js');
+  public $uses = array('Transaction','Debt');
 
     public function dashboard(){
     }
@@ -52,14 +53,59 @@ class TransactionsController extends AppController {
  * @return void
  */
 	public function add() {
+	    $groups = array();
+        foreach($this->User->getGroups($this->user_id) as $group) {
+            $groups[$group['id']] = $group['name'].' ['.$group['currency'].']';
+        }
+	    $this->set(compact('groups'));
+       
 		if ($this->request->is('post')) {
-			$this->Transaction->create();
-			if ($this->Transaction->save($this->request->data)) {
-				$this->Session->setFlash(__('The transaction has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The transaction could not be saved. Please, try again.'));
-			}
+      if ($this->data['Transaction']['personal'] == '0') {
+  			$this->Transaction->create();
+  			if ($this->Transaction->save($this->request->data)) {
+              $transaction_id = $this->Transaction->id;
+              $part = round($this->data['Transaction']['paid']/sizeof($this->data['Debt']['user_id']),2);
+      		    foreach($this->data['Debt']['user_id'] as $userid=>$on) {
+      		       $debt = array('Debt'=>array(
+                          'transaction_id'=>$transaction_id,
+                          'group_id'=>$this->data['Transaction']['group_id'],
+                          'user_id'=>$userid,
+                          'debt'=>$part                          
+                     ));
+                $this->Debt->create();
+                $this->Debt->save($debt);
+      		    }
+  				$this->Session->setFlash(__('The transaction has been saved'));
+  				$this->redirect(array('action' => 'index'));
+  			} else {
+  				$this->Session->setFlash(__('The transaction could not be saved. Please, try again.'));
+  			}
+     }else{
+        $total = 0;
+        foreach($this->data['Debt']['debt'] as $userid=>$debt) {
+           $total = $total + (float)$debt;
+        }
+        $this->request->data['Transaction']['paid'] = $total;
+      	$this->Transaction->create();
+  			if ($this->Transaction->save($this->request->data)) {
+          $transaction_id = $this->Transaction->id;
+          foreach($this->data['Debt']['debt'] as $userid=>$debt) {
+               if((float)$debt <= 0) continue;
+               $debt = array('Debt'=>array(
+                        'transaction_id'=>$transaction_id,
+                        'group_id'=>$this->data['Transaction']['group_id'],
+                        'user_id'=>$userid,
+                        'debt'=>(float)$debt
+                   ));
+              $this->Debt->create();
+              $this->Debt->save($debt);
+          }
+ 				   $this->Session->setFlash(__('The transaction has been saved'));
+  				$this->redirect(array('action' => 'index'));
+        }else{
+          $this->Session->setFlash(__('The transaction could not be saved. Please, try again.'));
+        }
+      }
 		}
 	}
 

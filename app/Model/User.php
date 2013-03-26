@@ -13,17 +13,6 @@ class User extends AppModel {
  */
 	public $displayField = 'name';
 
-
-    public $hasAndBelongsToMany = array(
-        'Group' =>
-            array(
-                'className'              => 'Group',
-                'joinTable'              => 'groups_users',
-                'foreignKey'             => 'user_id',
-                'associationForeignKey'  => 'group_id',
-                'unique'                 => true,
-            )
-    );
 /**
  * Validation rules
  *
@@ -32,7 +21,7 @@ class User extends AppModel {
 	public $validate = array(
 		'email' => array(
 			'email' => array(
-				'rule' => array('email'),
+				'rule' => array('email','uniqe'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -190,6 +179,7 @@ class User extends AppModel {
                     'id'=>$row['Group']['id'],
                     'name'=>$row['Group']['name'],
                     'currency'=>$row['Group']['currency'],
+                    'confirmed'=>$row['GroupUser']['confirmed'],
                     'owner'=>$row['Group']['user_id'] == $user_id ? true : false,
                 );
             }

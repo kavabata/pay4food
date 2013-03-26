@@ -40,4 +40,12 @@ class Group extends AppModel {
 			),
 		),
 	);
+
+    public function getUsers($group_id) {
+        $sql = "SELECT GroupUser.balance, User.id, User.email, User.name FROM groups_users GroupUser
+        JOIN users User ON User.id = GroupUser.user_id
+        WHERE GroupUser.confirmed = '1' AND User.is_active = '1' AND GroupUser.group_id = '".(int)$group_id."'";
+        
+        return $this->query($sql);
+    }
 }

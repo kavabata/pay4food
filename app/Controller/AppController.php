@@ -106,7 +106,7 @@ class AppController extends Controller {
             //-/ login remembered user
         }
         Configure::write('user_data', $this->user_data);
-        
+        $this->set('user_data',$this->user_data);
         $this->js_vars['servers']['main'] = Configure::read('Servers.main');
         $this->js_vars['path']['relative'] = Router::url('/');
         $this->js_vars['path']['absolute'] = Router::url('/', true);

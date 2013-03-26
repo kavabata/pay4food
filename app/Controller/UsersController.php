@@ -7,6 +7,8 @@ App::uses('AppController', 'Controller');
  */
 class UsersController extends AppController {
 
+    public $uses = array('User','Group','GroupsUser');
+
     function beforeFilter(){
         parent::beforeFilter();
         $this->Auth->allow('login','signup','forgot_password','get_new_password');
@@ -80,6 +82,13 @@ class UsersController extends AppController {
             }
         } elseif ($this->Auth->user()) {
             $this->redirect($this->Auth->redirect());
+        }
+    }
+    
+    public function logout() {
+        if ($this->Auth->logout()) {
+            $this->Cookie->delete('User.remembered');
+            $this->redirect($this->Auth->logoutRedirect);
         }
     }
 
@@ -165,6 +174,7 @@ class UsersController extends AppController {
     			$this->User->create();
     			if ($this->User->save($this->request->data, false)) {
                     $new_user_id = $this->User->id;
+                    $this->redirect('/dashboard');
                 }
             }
         }
@@ -182,19 +192,43 @@ class UsersController extends AppController {
 		$this->User->recursive = 0;
 		$this->set('users', $this->paginate());
 	}
+    
     public function ajax_list($group_id) {
+        $this->layout = 'ajax';
         $groups = $this->User->getGroups($this->user_id);
         if (empty($groups[$group_id])) return false;
-        
-        #$users = $this->Group->getUsers($group_id);
-        
-        //$conditions = array('GroupsUser.group_id'=>$group_id);
-        //$conditions = array('Group.id'=>$group_id);
-  		$this->User->recursive = 2;
-        debug($this->paginate($conditions));
-		$this->set('users', $this->paginate($conditions));
+        $users = $this->Group->getUsers($group_id);
+		$this->set(compact('users','group_id','groups'));
+    }
+    
+    public function ajax_select($group_id) {
+        $this->layout = 'ajax';
+        $groups = $this->User->getGroups($this->user_id);
+        if (empty($groups[$group_id])) return false;
+        $users = $this->Group->getUsers($group_id);
+		$this->set(compact('users','group_id','groups'));
     }
 
+    public function invite($group_id) {
+        $groups = $this->User->getGroups($this->user_id);
+        if (empty($groups[$group_id]) || !$groups[$group_id]['owner']) $this->redirect(array('controller'=>'users','action'=>'index'));
+        
+        if ($this->request->is('post') && !empty($this->request->data['User']['email'])){
+             $user = $this->User->find('first',array('conditions'=>array('User.email'=>$this->request->data['User']['email'])));
+             if (!empty($user)) {
+                $linked = $this->GroupsUser->checkExist($user['User']['id'],$group_id);
+                if (empty($linked)) {
+                    $this->GroupsUser->save(array('GroupsUser'=>array('user_id'=>$user['User']['id'],'group_id'=>$group_id,'confirmed'=>'0')));
+                    $this->Session->setFlash('User was invited.', 'default', array(), 'flash');
+                } else {
+                    $this->Session->setFlash('User was in group already.', 'default', array(), 'flash');
+                }
+                $this->redirect(array('controller'=>'users','action'=>'index'));
+             }else{
+                $this->Session->setFlash('Wrong user email.', 'default', array(), 'flash');
+             }
+        }
+    }
 /**
  * view method
  *

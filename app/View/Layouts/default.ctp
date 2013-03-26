@@ -34,7 +34,8 @@
 <body>
 	<div class="container">
 		<div class="header">
-			<h3 class="muted">Pay For Food</h3>
+			<h3 class="muted">
+            <?php echo $this->Html->link('Pay For Food',Router::url('/',true));?></h3>
 			<div class="navbar">
 				<div class="navbar-inner">
 					<div class="container">
@@ -43,6 +44,7 @@
 							<li class="<?php echo $this->name == 'Transactions' && $this->action == "payout" ? 'active' : ''; ?>"><a href="/transactions/payout">Payout</a></li>
                             <li class="<?php echo $this->name == 'Users' ? 'active' : ''; ?>"><a href="/users">Users</a></li>
                             <li class="<?php echo $this->name == 'Transactions' && $this->action == "index" ? 'active' : ''; ?>"><a href="/transactions">History</a></li>
+                            <?php if(!empty($user_data)): ?><li><a href="/logout">Logout</a></li><?php endif;?>
 						</ul>
 					</div>
 				</div>

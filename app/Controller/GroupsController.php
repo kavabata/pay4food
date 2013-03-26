@@ -14,6 +14,35 @@ class GroupsController extends AppController {
  */
 	public $helpers = array('Js');
     public $uses = array('Group','GroupsUser');
+    
+    public function confirm($group_id) {
+        $invitation = $this->GroupsUser->checkExist($this->user_id,$group_id);
+        if (!empty($invitation)) {
+            if($invitation['GroupsUser']['confirmed'] != '1'){
+                $invitation['GroupsUser']['confirmed'] = '1';
+                $this->GroupsUser->save($invitation);
+                $this->Session->setFlash(__('U confirm your join to this group.'));
+            }else{
+                $this->Session->setFlash(__('U already confirm your join to this group.'));
+            }
+        }else{
+            $this->Session->setFlash(__('U wasn\'t invited on this group.'));
+        }
+        $this->redirect(array('controller'=>'users','action'=>'index'));
+    }
+    
+    public function removeuser($group_id) {
+        $group = $this->Group->read(null,$group_id);
+        if ($group['Group']['user_id'] == $this->user_id) {
+            $linked = $this->GroupsUser->checkExist((int)$this->params->params['named']['user'],$group_id);
+            if (!empty($linked)) {
+                $this->GroupsUser->delete($linked['GroupsUser']['id']);
+            }        
+        }
+        $this->redirect(array('controller'=>'users','action'=>'index'));
+    }
+    
+    
 /**
  * index method
  *
