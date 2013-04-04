@@ -5,14 +5,16 @@
                 <?php //echo $this->Session->flash('flash3'); ?>
             </div>
             <h2>Forgot Password</h2>
-            <p>Enter your email address to receive the password reset email. If you don't receive an email from TeachersPayTeachers, please make sure to check your junk mail folder.</p>
+            <p>Enter your email address to receive the password reset email. <br />
+            If you don't receive an email from pay4food, <br />
+            please make sure to check your junk mail folder.</p>
             <?php
             echo $this->Form->create('User', array('url' => array('controller' => 'users', 'action' => 'forgot_password', 'admin' => false), 'class' => 'form_style_1'));
                 echo $this->Form->input(
                     'email',
                     array('label' => 'Email:', 'class' => 'js-highlight js-hide-tip')
                 );
-                echo $this->Form->submit(' ', array('class' => 'request_pass_btn'));
+                echo $this->Form->submit('Recover Password', array('class' => 'request_pass_btn'));
             echo $this->Form->end();
             ?>
             

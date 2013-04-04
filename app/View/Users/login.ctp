@@ -1,22 +1,20 @@
 <div class="login_page">
     <div class="login_page_content">
-        <h2>Login to pay4food</h2>  
-        
         <?php echo $this->Session->flash('auth'); ?>
         <?php echo $this->Session->flash('flash2'); ?>
         
-        <div class="login_block">
+        <div class="login_block left">
             <h3>Login</h3>
             <?php
             echo $this->Form->create('User', array('url' => $url_params, 'class' => 'form_style_1'));
                 echo $this->Form->input('email', array('label' => 'Email:', 'class' => 'js-hide-tip'));
-                echo $this->Form->input('password', array('label' => 'Password:', 'class' => 'js-hide-tip', 'after' => '<span class="info">Passwords are case sensitive.</span>'));
+                echo $this->Form->input('password', array('label' => 'Password:', 'class' => 'js-hide-tip'));
                 echo $this->Form->input('remember_me', array('type' => 'checkbox', 'label' => 'Remember me'));
             echo $this->Form->end('Login');
             ?>
         </div>
         
-        <div class="signup_block">
+        <div class="signup_block left">
             <h3>Not Yet a Member?</h3>
             <p>Registration is free and easy</p>
             <?php
@@ -27,7 +25,7 @@
             );
             ?>
         </div>
-        <div class="forgot_block">
+        <div class="forgot_block left">
             <h3>Having Trouble?</h3>
             <?php
             echo $this->Html->link(

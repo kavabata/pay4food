@@ -8,6 +8,8 @@ class Debt extends AppModel {
 
 
   public function afterSave(){
+    $sql = "UPDATE groups_users SET balance = 0;";
+    $this->query($sql);
     $sql = "
     UPDATE groups_users gu 
 JOIN (SELECT SUM(debt) AS balance,user_id,group_id FROM debts GROUP BY `user_id`,`group_id`) AS jd ON jd.group_id = gu.group_id AND jd.user_id = gu.`user_id`

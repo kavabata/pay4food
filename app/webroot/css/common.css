@@ -1,0 +1,111 @@
+
+.left{
+  float:left;
+}
+.right{
+  float:right;
+}
+.clear{
+  clear:both;
+}
+.margin-left{
+  margin-left: 15px;
+}
+
+.header .logo a {
+  color: #555;
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.transaction{
+  padding: 5px;
+}
+.transaction .user{
+  font-weight: bold;
+  color: #179814;
+  margin-right: 20px;
+  min-width: 200px;
+}
+.transaction .date{
+  color: #777777;
+}
+.transaction .details{
+  font-size: 10px;
+}
+.paging .disabled{
+  display:none;
+}
+#user_list .user{
+  padding: 2px;
+}
+.user .check {
+  width: 30px;
+  height: 20px;
+}
+
+.user .balance {
+  width: 100px;
+  padding-top: 4px;
+}
+.user .name{
+  font-weight: bold;
+  color: #179814;
+  padding-top: 4px;
+}
+.transactions div.input label{
+  display: none;
+}
+.transactions div.input{
+  float: left;
+  margin-right: 10px;
+}
+.transactions div.number{
+  float: right;
+  margin-right: 0px;
+}
+#user_list_payout .payout{
+  padding: 5px 0;
+}
+#user_list_payout .payout .from{
+  width: 250px;
+  font-weight: bold;
+  color: #CB2323;
+  background: url(../img/arrow-right.png) right no-repeat;  
+  float: left;
+}
+#user_list_payout .payout .to{
+  width: 200px;
+  margin-left: 20px;
+  font-weight: bold;
+  color: #179814;
+  float: left;
+}
+#user_list_payout .payout .money{
+  float: left;
+}
+
+#users .users table{
+  border: 1px solid #c4c4c4;
+  width: 100%;
+}
+#users .users table thead th{
+  background: #FAFAFA;
+  text-align: left;
+  border-bottom: 1px solid #D4D4D4;
+}
+.transactions .invite_link{
+  margin: 0 10px ;
+}
+.login_block, .signup_block, .forgot_block{
+  width: 30%;
+  margin: 20px;
+}
+.error-message{
+  color: #FF9CA5;
+}
+
+
+
+
+

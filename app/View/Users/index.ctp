@@ -1,36 +1,41 @@
-<div>
-    <?php echo $this->Html->link(__('New Group'), array('controller'=>'groups','action' => 'add')); ?>
-</div><br /><br />
-<div id="groups">
+<?php echo $this->Form->create('Transaction'); ?>
+<div class="transactions index">
+<?php 
+echo $this->Form->input('group_id',array('options'=>$groups,'type'=>'select'));
+echo $this->Html->link(__('New Group'), array('controller'=>'groups','action' => 'add'),array('class'=>'right new_group'));
+?>
+  <div class="clear"></div>
+</div>
+</form>
 <?php 
 $newinvite = false;
-foreach($groups as $group): 
+foreach($groups_list as $group): 
     if($group['confirmed'] != '1') {
         $newinvite = true;
         continue;
     }
-?>
-    <a href="javascript:loadGroup(<?php echo $group['id'];?>);"><?php echo $group['name'];?></a>
-<?php endforeach;?>
-<br /><br />
-<?php if($newinvite):?>
-Also u have invitation to, clicking on link, u confirm your join:
+endforeach;
+if($newinvite):?>
+<div id="groups">You have invitation to new groups. When you click on link, you confirm your join:
 <?php
 foreach($groups as $group): 
     if($group['confirmed'] == '1') continue;
     echo $this->Html->link($group['name'],array('controller'=>'groups','action'=>'confirm',$group['id']));
 endforeach;
-endif;
 ?>
-
-
 </div>
+<?php endif;?>
 
 <div id="users"></div>
-
-
+  
 <script>
-function loadGroup(group_id){
-   loadPiece("<?php echo Router::url(array('controller'=>'users','action'=>'ajax_list'),true);?>/"+group_id,"#users"); 
-};
+var user_id = <?php echo $user_data['id'];?>;
+
+$(document).ready(function(){
+  $("#TransactionGroupId").bind("change",function(){
+    $(".transactions .invite_link").remove();
+    loadPiece("/users/ajax_list/"+$("#TransactionGroupId").val(),"#users");
+  });
+  $("#TransactionGroupId").trigger("change");
+});
 </script>

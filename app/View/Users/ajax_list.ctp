@@ -1,14 +1,15 @@
 <div class="users index">
-	<h2><?php echo __('Users'); ?></h2>
 	<table cellpadding="5" cellspacing="5">
+  <thead>
 	<tr>
 			<th>Email</th>
 			<th>Name</th>
 			<th>Balance</th>
-            <?php if($groups[$group_id]['owner']) : ?>
+      <?php if($groups[$group_id]['owner']) : ?>
 			<th class="actions"><?php echo __('Actions'); ?></th>
-            <?php endif; ?>
+      <?php endif; ?>
 	</tr>
+  </thead>
 	<?php foreach ($users as $user): ?>
 	<tr>
 		<td><?php echo h($user['User']['email']); ?>&nbsp;</td>
@@ -23,11 +24,9 @@
     <?php endforeach; ?>
 	</table><br /><br />
 </div>
+
 <?php if($groups[$group_id]['owner']) : ?>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('Invite User'), array('action' => 'invite',$group_id)); ?></li>
-	</ul>
-</div>
+<script>
+$(".transactions .clear").before('<a href="/users/invite/<?php echo $group_id;?>" class="invite_link right">Invite User</a>');
+</script>
 <?php endif; ?>

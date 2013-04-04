@@ -13,13 +13,18 @@ class TransactionsController extends AppController {
  * @var array
  */
 	public $helpers = array('Js');
-  public $uses = array('Transaction','Debt');
+  public $uses = array('Transaction','Debt','Group');
 
     public function dashboard(){
     }
 
 
     public function payout(){
+	    $groups = array();
+      foreach($this->User->getGroups($this->user_id) as $group) {
+          $groups[$group['id']] = $group['name'].' ['.$group['currency'].']';
+      }
+	    $this->set(compact('groups'));
         
     }
 /**
@@ -28,10 +33,33 @@ class TransactionsController extends AppController {
  * @return void
  */
 	public function index() {
-		$this->Transaction->recursive = 0;
-		$this->set('transactions', $this->paginate());
+    $groups = array();
+    foreach($this->User->getGroups($this->user_id) as $group) {
+        $groups[$group['id']] = $group['name'].' ['.$group['currency'].']';
+    }
+    $this->set(compact('groups'));
 	}
 
+
+  public function index_ajax($group_id){
+    $this->layout = 'ajax';
+    $groups = $this->User->getGroups($this->user_id);
+    if (empty($groups[$group_id])) return false;
+		$this->Transaction->recursive = 1;
+    
+    $conditions['Transaction.group_id'] = $group_id;
+    $this->paginate = array(
+      'limit'=>20,
+      'order'=>array(
+        'Transaction.created' => 'desc'
+      )
+    );
+		$this->set('transactions', $this->paginate($conditions));
+    
+    $users = $this->Group->getUsers($group_id);
+    $this->set(compact('users','groups','group_id'));
+  }
+  
 /**
  * view method
  *
@@ -60,6 +88,13 @@ class TransactionsController extends AppController {
 	    $this->set(compact('groups'));
        
 		if ($this->request->is('post')) {
+		  if (!empty($this->request->data['Transaction']['to_id'])) {
+		    $this->request->data['Transaction']['personal'] = '1';
+        $this->request->data['Debt']['debt'] = array(
+          $this->request->data['Transaction']['to_id']=>$this->data['Transaction']['paid']
+        );
+		  }
+
       if ($this->data['Transaction']['personal'] == '0') {
   			$this->Transaction->create();
   			if ($this->Transaction->save($this->request->data)) {

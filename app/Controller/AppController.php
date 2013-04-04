@@ -74,7 +74,7 @@ class AppController extends Controller {
         #    $this->layout = 'admin';
                 
         $this->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
-        $this->Auth->loginRedirect = array('controller' => 'transactions', 'action' => 'dashboard');
+        $this->Auth->loginRedirect = array('controller' => 'transactions', 'action' => 'add');
         $this->Auth->logoutRedirect = array('controller' => 'users', 'action' => 'login');
         
         $user_data = array();

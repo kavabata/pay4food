@@ -44,27 +44,26 @@ function updatePaid(){
     }
 }
 </script>
-<div class="transactions form">
 <?php echo $this->Form->create('Transaction'); ?>
-	<fieldset>
-		<legend><?php echo __('Someone should pay for that! Equal for all checked!'); ?></legend>
+<div class="transactions form">
 	<?php
 		echo $this->Form->input('group_id',array('options'=>$groups,'type'=>'select'));
-        echo $this->Form->input('user_id',array('options'=>array($user_data['id']=>$user_data['name']),'type'=>'select'));
+    echo $this->Form->input('user_id',array('options'=>array($user_data['id']=>$user_data['name']),'type'=>'select'));
 		echo $this->Form->input('paid',array('value'=>'0.00'));
-        echo $this->Form->input('personal',array('type'=>'hidden','value'=>0));
+    echo $this->Form->input('personal',array('type'=>'hidden','value'=>0));
 	?>
-	   <a href="javascript:personalMode('1')" id="personal_link_1">Each have personal debt</a>
-       <a href="javascript:personalMode('0')" id="personal_link_0">One for all</a>
-    </fieldset>
-    
-    <div id="user_list"></div>
-<?php echo $this->Form->end(__('Submit')); ?>
+    <div class="clear"></div>
 </div>
+
+<a href="javascript:personalMode('1')" id="personal_link_1"><?php echo __('Each have personal debt');?></a>
+<a href="javascript:personalMode('0')" id="personal_link_0"><?php echo __('One for all');?></a>
+<br /><br />
+       
+<div id="user_list"></div>
+<?php echo $this->Form->end(__('Submit')); ?>
+
 <script>
-
 var user_id = <?php echo $user_data['id'];?>;
-
 $(document).ready(function(){
     $("#TransactionGroupId").bind("change",function(){
         var group_id = $(this).val();
@@ -78,10 +77,11 @@ $(document).ready(function(){
                 $("#TransactionUserId").append('<option value="'+value['User']['id']+'"'+selected+'>'+value['User']['name']+'</option>');
                 $("#user_list").append(
                     $('<div class="user"></div>').attr('id','user_div_'+value['User']['id'])
-                        .append($('<div></div>').attr('class','check').html('<input type="checkbox" name="data[Debt][user_id]['+value['User']['id']+']"/>'))
-                        .append($('<div></div>').attr('class','balance').html(value['GroupUser']['balance']+' '+data['groups'][group_id]['currency']))
-                        .append($('<div></div>').attr('class','name').html(value['User']['name']))
-                        .append($('<div></div>').attr('class','summ').html('<input type="text" name="data[Debt][debt]['+value['User']['id']+']" value="0.00"/>'))
+                        .append($('<div></div>').attr('class','check left').html('<input type="checkbox" name="data[Debt][user_id]['+value['User']['id']+']"/>'))
+                        .append($('<div></div>').attr('class','balance left').html(value['GroupUser']['balance']+' '+data['groups'][group_id]['currency']))
+                        .append($('<div></div>').attr('class','name left').html(value['User']['name']))
+                        .append($('<div></div>').attr('class','summ right').html('<input type="text" name="data[Debt][debt]['+value['User']['id']+']" value="0.00"/>'))
+                        .append($('<div></div>').attr('class','clear'))
                 );
                 $("#user_list input").on("change",{},updatePaid);
             });

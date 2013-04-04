@@ -17,7 +17,8 @@
 
 		echo $this->Html->css(array(
 			'bootstrap',
-			'bootstrap-responsive'
+			'bootstrap-responsive',
+      'common'
 		));
 		echo $this->fetch('css');
 
@@ -25,7 +26,7 @@
 			'jquery',
             'jquery.form',
             'jquery.validate',
-			'bootstrap',
+            'bootstrap',
             'common'
 		));
 		echo $this->fetch('script');
@@ -34,13 +35,23 @@
 <body>
 	<div class="container">
 		<div class="header">
+      <div class="logo">
+        <div class="left"><?php echo $this->Html->link($this->Html->image('logo.png'),Router::url('/',true),array('escape'=>false));?></div>
+        <div class="left margin-left"><br /><?php echo $this->Html->link('Pay For Food',Router::url('/',true));?><br />
+          <?php echo __("Someone should pay for that!");?>
+        </div>
+        <div class="right">
+          <a href="https://github.com/kavabata/pay4food/issues" target="_blank"><strong style="color: #FF9CA5;">BUG?</strong></a>
+        </div>
+        <div class="clear"></div>
+      </div>
 			<h3 class="muted">
-            <?php echo $this->Html->link('Pay For Food',Router::url('/',true));?></h3>
+            </h3>
 			<div class="navbar">
 				<div class="navbar-inner">
 					<div class="container">
 						<ul class="nav">
-							<li class="<?php echo $this->name == 'Transactions' && $this->action == "dashboard"? 'active' : ''; ?>"><a href="/">Dashboard</a></li>
+							<li class="<?php echo $this->name == 'Transactions' && $this->action == "add"? 'active' : ''; ?>"><a href="/">Dashboard</a></li>
 							<li class="<?php echo $this->name == 'Transactions' && $this->action == "payout" ? 'active' : ''; ?>"><a href="/transactions/payout">Payout</a></li>
                             <li class="<?php echo $this->name == 'Users' ? 'active' : ''; ?>"><a href="/users">Users</a></li>
                             <li class="<?php echo $this->name == 'Transactions' && $this->action == "index" ? 'active' : ''; ?>"><a href="/transactions">History</a></li>

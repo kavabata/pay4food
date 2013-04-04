@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
  */
 class UsersController extends AppController {
 
-    public $uses = array('User','Group','GroupsUser');
+    public $uses = array('User','Group','GroupsUser','Transaction');
 
     function beforeFilter(){
         parent::beforeFilter();
@@ -186,8 +186,12 @@ class UsersController extends AppController {
  * @return void
  */
 	public function index() {
-        $groups = $this->User->getGroups($this->user_id);
-	    $this->set(compact('groups'));
+    $groups_list = $this->User->getGroups($this->user_id);
+    $groups = array();
+    foreach($groups_list as $group) {
+        $groups[$group['id']] = $group['name'].' ['.$group['currency'].']';
+    }
+	  $this->set(compact('groups_list','groups'));
         
 		$this->User->recursive = 0;
 		$this->set('users', $this->paginate());
@@ -198,7 +202,7 @@ class UsersController extends AppController {
         $groups = $this->User->getGroups($this->user_id);
         if (empty($groups[$group_id])) return false;
         $users = $this->Group->getUsers($group_id);
-		$this->set(compact('users','group_id','groups'));
+		    $this->set(compact('users','group_id','groups'));
     }
     
     public function ajax_select($group_id) {
@@ -206,7 +210,9 @@ class UsersController extends AppController {
         $groups = $this->User->getGroups($this->user_id);
         if (empty($groups[$group_id])) return false;
         $users = $this->Group->getUsers($group_id);
-		$this->set(compact('users','group_id','groups'));
+		    $this->set(compact('users','group_id','groups'));
+        $payouts = $this->Transaction->getPayout($users);
+        $this->set(compact('payouts'));
     }
 
     public function invite($group_id) {
