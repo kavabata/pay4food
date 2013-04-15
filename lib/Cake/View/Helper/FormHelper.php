@@ -225,6 +225,7 @@ class FormHelper extends AppHelper {
 					}
 				}
 			}
+      //debug($object->validate);
 			$this->fieldset[$model]['validates'] = $validates;
 		}
 

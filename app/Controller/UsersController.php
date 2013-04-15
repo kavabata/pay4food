@@ -8,6 +8,7 @@ App::uses('AppController', 'Controller');
 class UsersController extends AppController {
 
     public $uses = array('User','Group','GroupsUser','Transaction');
+    public $helpers = array('JqueryValidation');
 
     function beforeFilter(){
         parent::beforeFilter();
@@ -167,12 +168,14 @@ class UsersController extends AppController {
     }
     public function signup(){
         $this->render('signup');
+        
+        //debug($this->User->validator());
         if ($this->request->is('post')) {
             $this->User->validates();
             if (empty($this->User->validationErrors)) {
                 $this->request->data['User']['is_active'] = '1';
-    			$this->User->create();
-    			if ($this->User->save($this->request->data, false)) {
+          			$this->User->create();
+          			if ($this->User->save($this->request->data, false)) {
                     $new_user_id = $this->User->id;
                     $this->redirect('/dashboard');
                 }

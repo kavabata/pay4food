@@ -53,7 +53,7 @@
 						<ul class="nav">
 							<li class="<?php echo $this->name == 'Transactions' && $this->action == "add"? 'active' : ''; ?>"><a href="/">Dashboard</a></li>
 							<li class="<?php echo $this->name == 'Transactions' && $this->action == "payout" ? 'active' : ''; ?>"><a href="/transactions/payout">Payout</a></li>
-                            <li class="<?php echo $this->name == 'Users' ? 'active' : ''; ?>"><a href="/users">Users</a></li>
+                            <li class="<?php echo $this->name == 'Users'&& $this->action == "index" ? 'active' : ''; ?>"><a href="/users">Users</a></li>
                             <li class="<?php echo $this->name == 'Transactions' && $this->action == "index" ? 'active' : ''; ?>"><a href="/transactions">History</a></li>
                             <?php if(!empty($user_data)): ?><li><a href="/logout">Logout</a></li><?php endif;?>
 						</ul>

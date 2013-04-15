@@ -19,19 +19,49 @@ class User extends AppModel {
  * @var array
  */
 	public $validate = array(
-		'email' => array(
+			'email' => array(
+        'rule1'=>array(
+  				'rule' => array('email','uniqe'),
+  				'message' => '* Invalid email address',
+  				'allowEmpty' => false,
+  				'required' => true,
+  				//'last' => false, // Stop validation after this rule
+  				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+        ),
+			),
+      'email_confirm'=>array(
+        'rule1'=>array(
+  				'rule' => array('email'),
+          'required' => true,
+          'message' => '* Invalid email address',
+        ),
+        'rule2'=>array(
+          'rule'=>array('equalTo','email'),
+          'message' => '* Email Not Same',
+        )
+      ),
+      
+      'password'=>array(
+        'rule'=>'notEmpty',
+        'required' => true,
+      ),
+      'password_confirm'=>array(
+        'required' => true,
+        'rule'=>array('equalTo','password'),
+        'message'=>'* This field is different from password',
+      )
+	);
+  
+  public $signupValidate = array(
+    'email' => array(
 			'email' => array(
 				'rule' => array('email','uniqe'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
-     public $loginValidate = array(
-        'email' => array(
+      )
+    )
+  );
+  
+  public $loginValidate = array(
+    'email' => array(
 			'notempty' => array(
 				'rule' => array('email'),
 				'message' => 'The email is missing!',
@@ -39,7 +69,7 @@ class User extends AppModel {
 				'required' => true,
 			)
 		),
-        'password' => array(
+    'password' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'The password is missing!',
@@ -48,6 +78,7 @@ class User extends AppModel {
 			),
 		)
     );
+    
     public $forgotValidate = array(
         'email' => array(
 			'rule' => array('email'),
